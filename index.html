@@ -1,0 +1,2783 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyWeb Guide — Python в веб-разработке</title>
+
+  <meta name="description" content="PyWeb Guide — современный веб-ресурс о Python в веб-разработке: backend, Django, Flask, базы данных, дорожная карта, практика и сравнение фреймворков.">
+  <meta name="theme-color" content="#0b0f16">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐍%3C/text%3E%3C/svg%3E">
+
+  <style>
+:root {
+      --bg: #0b0f16;
+      --bg-soft: #0f1522;
+      --surface: #121a28;
+      --surface-2: #182233;
+      --surface-3: #1d2a3f;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.14);
+      --text: #f4f7fb;
+      --muted: rgba(244, 247, 251, 0.72);
+      --accent: #4c8dff;
+      --accent-2: #7dd3fc;
+      --green: #34d399;
+      --yellow: #ffd43b;
+      --danger: #ff8f8f;
+      --success: #8ce1a0;
+      --radius: 18px;
+      --radius-lg: 26px;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+      --font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --mono: Consolas, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(76, 141, 255, 0.18), transparent 28%),
+        radial-gradient(circle at top left, rgba(125, 211, 252, 0.12), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(52, 211, 153, 0.08), transparent 22%),
+        var(--bg);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(1160px, calc(100% - 32px));
+      margin-inline: auto;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 10px;
+      z-index: 200;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .skip-link:focus {
+      left: 10px;
+    }
+
+    /* FX */
+    .bg-fx {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.22;
+      animation: float 18s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 320px;
+      height: 320px;
+      background: #4c8dff;
+      top: -80px;
+      right: 8%;
+    }
+
+    .orb-2 {
+      width: 260px;
+      height: 260px;
+      background: #7dd3fc;
+      top: 32%;
+      left: -80px;
+      animation-delay: -4s;
+    }
+
+    .orb-3 {
+      width: 280px;
+      height: 280px;
+      background: #34d399;
+      bottom: -100px;
+      right: 18%;
+      animation-delay: -8s;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0) translateX(0) scale(1);
+      }
+
+      to {
+        transform: translateY(34px) translateX(-22px) scale(1.08);
+      }
+    }
+
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      z-index: 100;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--green));
+      box-shadow: 0 0 16px rgba(76, 141, 255, 0.55);
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 22, 0.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      position: relative;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .brand:hover {
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(76, 141, 255, 0.24), rgba(125, 211, 252, 0.14));
+      border: 1px solid var(--line);
+      font-size: 1.15rem;
+      box-shadow: 0 0 0 4px rgba(76, 141, 255, 0.05);
+    }
+
+    .brand-text span {
+      color: var(--accent);
+    }
+
+    .site-nav {
+      display: block;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 8px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.22s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+    }
+
+    .nav-link.active {
+      color: var(--text);
+      background: rgba(76, 141, 255, 0.14);
+      box-shadow: inset 0 0 0 1px rgba(76, 141, 255, 0.22);
+    }
+
+    .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 12px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .burger span {
+      width: 20px;
+      height: 2px;
+      margin-inline: auto;
+      background: var(--text);
+      border-radius: 999px;
+      transition: 0.2s ease;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 78px 0 34px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      animation: badgeGlow 3.5s ease-in-out infinite;
+    }
+
+    @keyframes badgeGlow {
+      0%,
+      100% {
+        box-shadow: 0 0 0 rgba(76, 141, 255, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 24px rgba(76, 141, 255, 0.18);
+      }
+    }
+
+    .hero h1,
+    .page-hero h1 {
+      margin: 16px 0 14px;
+      font-size: clamp(2.05rem, 5vw, 4.2rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+      text-wrap: balance;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(1.95rem, 4vw, 3.35rem);
+    }
+
+    .type-wrap {
+      color: var(--accent-2);
+      white-space: nowrap;
+    }
+
+    .cursor {
+      color: var(--accent);
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 76ch;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .hero-actions,
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover {
+      text-decoration: none;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #7aa8ff);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(76, 141, 255, 0.28);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 16px 36px rgba(76, 141, 255, 0.36);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--line-strong);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .stat:hover {
+      transform: translateY(-4px);
+      border-color: rgba(76, 141, 255, 0.26);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1.55rem;
+      color: var(--accent-2);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .window {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #0a0f18;
+      box-shadow: var(--shadow);
+      transform: rotate(1.5deg);
+      transition: transform 0.3s ease;
+    }
+
+    .window:hover {
+      transform: rotate(0deg) translateY(-4px);
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .window-bar span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .window-bar span:nth-child(1) {
+      background: #ff5f57;
+    }
+
+    .window-bar span:nth-child(2) {
+      background: #febc2e;
+    }
+
+    .window-bar span:nth-child(3) {
+      background: #28c840;
+    }
+
+    .window-bar p {
+      margin: 0 0 0 auto;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .window-code {
+      margin: 0;
+      padding: 18px;
+      overflow: auto;
+      font-family: var(--mono);
+      color: #d9e6ff;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    /* Sections */
+    .section {
+      padding: 38px 0;
+    }
+
+    .section-head {
+      margin-bottom: 20px;
+    }
+
+    .section-head h2,
+    .cta-panel h2 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+    }
+
+    .section-head p {
+      margin: 9px 0 0;
+      max-width: 78ch;
+      color: var(--muted);
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 14px;
+    }
+
+    .card,
+    .panel,
+    .form-card,
+    .info-card,
+    .compare-card,
+    .faq details,
+    .code-block,
+    .quiz,
+    .timeline-content,
+    .step,
+    .info-item {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+        var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 18px;
+      transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(76, 141, 255, 0.28);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+        var(--surface-2);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1.03rem;
+    }
+
+    .card p,
+    .info-item p,
+    .faq details p,
+    .timeline-content p,
+    .step p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-grid;
+      place-items: center;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 8px;
+      margin-right: 10px;
+      border-radius: 10px;
+      background: rgba(76, 141, 255, 0.14);
+      color: var(--accent-2);
+      font-size: 0.9rem;
+      font-weight: 900;
+      border: 1px solid rgba(76, 141, 255, 0.18);
+    }
+
+    /* Breadcrumb / page hero */
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .breadcrumb a {
+      color: var(--muted);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--accent);
+    }
+
+    .page-hero {
+      padding: 46px 0 18px;
+      position: relative;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.82rem;
+    }
+
+    /* Timeline */
+    .timeline {
+      display: grid;
+      gap: 18px;
+      position: relative;
+      padding-left: 8px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 25px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(76, 141, 255, 0.7), rgba(52, 211, 153, 0.35), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 64px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      border: 1px solid var(--line-strong);
+      color: var(--accent-2);
+      font-weight: 900;
+      box-shadow: 0 0 0 6px rgba(76, 141, 255, 0.06);
+      z-index: 1;
+    }
+
+    .timeline-content {
+      padding: 18px;
+    }
+
+    .timeline-content h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+
+    /* Tree */
+    .panel {
+      padding: 18px;
+    }
+
+    .tree {
+      overflow: auto;
+    }
+
+    .tree ul {
+      list-style: none;
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .tree-root {
+      padding-left: 0;
+    }
+
+    .tree li {
+      position: relative;
+      padding: 7px 0 7px 18px;
+      color: var(--muted);
+    }
+
+    .tree li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .tree li::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 21px;
+      width: 13px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .tree-root > li::before,
+    .tree-root > li::after {
+      display: none;
+    }
+
+    .tree-node {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .tree-node:hover {
+      transform: translateY(-2px);
+      border-color: rgba(76, 141, 255, 0.26);
+    }
+
+    .tree-node.strong {
+      border-color: rgba(76, 141, 255, 0.38);
+      box-shadow: 0 0 0 3px rgba(76, 141, 255, 0.08);
+    }
+
+    /* Chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-2px);
+      color: var(--text);
+      border-color: rgba(76, 141, 255, 0.3);
+      background: var(--surface-2);
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    .step {
+      padding: 16px;
+    }
+
+    .step strong {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      margin-bottom: 10px;
+      background: rgba(76, 141, 255, 0.14);
+      color: var(--accent-2);
+      border: 1px solid rgba(76, 141, 255, 0.18);
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+    }
+
+    caption {
+      text-align: left;
+      padding: 14px 16px 0;
+      color: var(--muted);
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--accent-2);
+      font-size: 0.95rem;
+    }
+
+    tbody tr {
+      transition: background 0.18s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    /* Code */
+    .code-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .code-block {
+      overflow: hidden;
+    }
+
+    .code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .copy-btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: 10px;
+      min-height: 36px;
+      padding: 0 12px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      transition: 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      border-color: rgba(76, 141, 255, 0.32);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn.copied {
+      color: var(--success);
+      border-color: rgba(140, 225, 160, 0.32);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .code-block code {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: #dbe5ff;
+      white-space: pre;
+    }
+
+    /* Compare */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: 16px;
+    }
+
+    .compare-card {
+      padding: 20px;
+      transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .compare-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .compare-card.django {
+      border-color: rgba(52, 211, 153, 0.24);
+      background:
+        linear-gradient(180deg, rgba(52, 211, 153, 0.10), rgba(255, 255, 255, 0.015)),
+        var(--surface);
+    }
+
+    .compare-card.flask {
+      border-color: rgba(125, 211, 252, 0.22);
+      background:
+        linear-gradient(180deg, rgba(125, 211, 252, 0.09), rgba(255, 255, 255, 0.015)),
+        var(--surface);
+    }
+
+    .compare-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .compare-card .subtitle {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .list li {
+      margin: 8px 0;
+    }
+
+    .badge-inline {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      font-size: 0.83rem;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* FAQ */
+    .faq details {
+      padding: 15px 16px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .faq details:hover {
+      border-color: rgba(76, 141, 255, 0.24);
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 800;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .faq summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq summary::after {
+      content: "+";
+      font-size: 1.2rem;
+      color: var(--accent);
+      transition: transform 0.2s ease;
+    }
+
+    .faq details[open] summary::after {
+      transform: rotate(45deg);
+    }
+
+    .faq details p {
+      margin-top: 10px;
+    }
+
+    /* Quiz */
+    .quiz {
+      padding: 20px;
+    }
+
+    .quiz h3 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .quiz fieldset {
+      border: 0;
+      padding: 0;
+      margin: 18px 0 0;
+      min-width: 0;
+    }
+
+    .quiz legend {
+      padding: 0;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .quiz-option:hover {
+      border-color: rgba(76, 141, 255, 0.28);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .quiz-option input {
+      margin-top: 3px;
+      width: auto;
+      min-height: auto;
+      accent-color: var(--accent);
+    }
+
+    .quiz-result {
+      margin-top: 18px;
+      min-height: 26px;
+      font-weight: 800;
+      color: var(--accent-2);
+    }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.14fr 0.86fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .form-card,
+    .info-card {
+      padding: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 50px;
+      padding: 13px 14px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: #0d1320;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    textarea {
+      min-height: 145px;
+      resize: vertical;
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    .btn:focus-visible,
+    .nav-link:focus-visible,
+    .copy-btn:focus-visible,
+    .burger:focus-visible,
+    summary:focus-visible {
+      outline: none;
+      border-color: rgba(76, 141, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(76, 141, 255, 0.14);
+    }
+
+    .form-status {
+      min-height: 26px;
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .form-status.error {
+      color: var(--danger);
+    }
+
+    .form-status.success {
+      color: var(--success);
+    }
+
+    .note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .info-item {
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.025);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .info-item:hover {
+      transform: translateY(-3px);
+      border-color: rgba(76, 141, 255, 0.22);
+    }
+
+    .info-item strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .check-list li {
+      position: relative;
+      padding-left: 30px;
+      color: var(--muted);
+    }
+
+    .check-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    /* CTA */
+    .cta-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid rgba(76, 141, 255, 0.18);
+      background:
+        linear-gradient(135deg, rgba(76, 141, 255, 0.18), rgba(125, 211, 252, 0.08)),
+        var(--surface);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 30%);
+      pointer-events: none;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      margin-top: 46px;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(18, 26, 40, 0.92);
+      color: var(--text);
+      font-size: 1.15rem;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: 0.22s ease;
+      z-index: 60;
+      box-shadow: var(--shadow);
+    }
+
+    .to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Reveal / page */
+    .page {
+      animation: pageIn 0.35s ease;
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-6px);
+      }
+
+      40% {
+        transform: translateX(6px);
+      }
+
+      60% {
+        transform: translateX(-4px);
+      }
+
+      80% {
+        transform: translateX(4px);
+      }
+    }
+
+    @media (max-width: 1020px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        max-width: 620px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .burger {
+        display: flex;
+      }
+
+      .site-nav {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        right: 0;
+        padding: 14px 16px 16px;
+        background: rgba(11, 15, 22, 0.98);
+        border-bottom: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: 0.2s ease;
+      }
+
+      .site-nav.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-menu {
+        display: grid;
+        gap: 6px;
+      }
+
+      .nav-link {
+        width: 100%;
+        min-height: 46px;
+        padding-inline: 14px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .cta-panel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .timeline::before {
+        left: 21px;
+      }
+
+      .timeline-item {
+        padding-left: 56px;
+      }
+
+      .timeline-dot {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .section {
+        padding: 26px 0;
+      }
+
+      .card,
+      .panel,
+      .form-card,
+      .info-card,
+      .compare-card,
+      .quiz,
+      .timeline-content,
+      .step {
+        padding: 16px;
+      }
+
+      .hero-actions .btn,
+      .cta-actions .btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+
+/* Схема темы и защита сеток на узких экранах */
+.knowledge-figure { margin: 0 0 24px; }
+.knowledge-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 18px; }
+.knowledge-figure figcaption { margin-top: 8px; color: var(--muted); }
+.hero-grid > *, .contact-grid > *, .compare-grid > * { min-width: 0; }
+@media (max-width: 360px) { .compare-grid, .quiz-grid { grid-template-columns: minmax(0, 1fr); } }
+
+</style>
+</head>
+
+<body id="top">
+  <div id="progress" aria-hidden="true"></div>
+
+  <div class="bg-fx" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <a class="skip-link" href="#content">Перейти к содержанию</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#/" aria-label="PyWeb Guide — на главную">
+        <span class="brand-icon" aria-hidden="true">🐍</span>
+        <span class="brand-text">PyWeb<span>Guide</span></span>
+      </a>
+
+      <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="site-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="Основная навигация">
+        <ul class="nav-menu">
+          <li><a class="nav-link active" href="#/">Главная</a></li>
+          <li><a class="nav-link" href="#/about">О Python</a></li>
+          <li><a class="nav-link" href="#/frameworks">Фреймворки</a></li>
+          <li><a class="nav-link" href="#/contacts">Контакты</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <noscript><p class="container">Для навигации между разделами включите JavaScript.</p></noscript>
+  <main id="content" tabindex="-1">
+
+    <!-- ============================= ГЛАВНАЯ ============================= -->
+    <section class="page" data-route="/" aria-label="Главная страница">
+      <div class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="badge">Python • Backend • Django • Flask</span>
+
+            <h1>
+              Python для веб-разработки: от идеи до
+              <span class="type-wrap"><span id="typed-text">Django</span><span class="cursor">|</span></span>
+            </h1>
+
+            <p class="lead">
+              PyWeb Guide помогает понять, как язык превращается в серверную логику:
+              запросы, базы данных, фреймворки, первые проекты и осознанный выбор между Django и Flask.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#/frameworks">Сравнить фреймворки</a>
+              <a class="btn btn-secondary" href="#/about">Изучить backend</a>
+            </div>
+
+            <div class="hero-stats">
+              <article class="stat reveal">
+                <strong class="stat-number" data-count="2">0</strong>
+                <span>фреймворка в сравнении</span>
+              </article>
+
+              <article class="stat reveal">
+                <strong class="stat-number" data-count="4">0</strong>
+                <span>раздела сайта</span>
+              </article>
+
+              <article class="stat reveal">
+                <strong class="stat-number" data-count="8">0</strong>
+                <span>тематических блоков</span>
+              </article>
+
+              <article class="stat reveal">
+                <strong class="stat-number" data-count="6">0</strong>
+                <span>проверенных ширин экрана</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="hero-visual reveal">
+            <div class="window">
+              <div class="window-bar">
+                <span></span>
+                <span></span>
+                <span></span>
+                <p>app.py</p>
+              </div>
+              <pre class="window-code"><code>from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "PyWeb Guide 🚀"
+
+if __name__ == "__main__":
+    app.run(debug=True)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="section" aria-label="Что здесь можно изучить">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Что здесь можно изучить</h2>
+            <p>
+              Сайт построен как короткий маршрут: от роли Python в вебе — к конкретным инструментам,
+              коду и практике.
+            </p>
+          </div>
+
+          <div class="card-grid">
+            <article class="card reveal">
+              <h3><span class="tag">🌐</span>Backend</h3>
+              <p>Как сервер принимает запрос, обрабатывает данные и возвращает ответ пользователю.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">⚙️</span>Фреймворки</h3>
+              <p>Сильные стороны Django и Flask, сценарии использования и различия в подходе.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">🗄️</span>База данных</h3>
+              <p>Зачем приложению хранить данные и как Python работает с SQLite и другими БД.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">💻</span>Код</h3>
+              <p>Небольшие примеры, которые показывают серверную логику без лишней сложности.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Дорожная карта">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Дорожная карта новичка</h2>
+            <p>Пять шагов, которые помогают пройти путь от синтаксиса до первого веб-приложения.</p>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item reveal">
+              <span class="timeline-dot">1</span>
+              <div class="timeline-content">
+                <h3>Повтори основы Python</h3>
+                <p>Переменные, условия, функции, списки и словари — минимальная база для старта.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item reveal">
+              <span class="timeline-dot">2</span>
+              <div class="timeline-content">
+                <h3>Пойми, как работает веб</h3>
+                <p>Браузер, сервер, HTTP-запрос, ответ, маршруты и страницы — основная логика веба.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item reveal">
+              <span class="timeline-dot">3</span>
+              <div class="timeline-content">
+                <h3>Выбери первый фреймворк</h3>
+                <p>Flask — для простого старта, Django — для проектов с админкой и базой данных.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item reveal">
+              <span class="timeline-dot">4</span>
+              <div class="timeline-content">
+                <h3>Подключи данные</h3>
+                <p>SQLite, ORM, модели и простые запросы — следующий шаг к реальному приложению.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item reveal">
+              <span class="timeline-dot">5</span>
+              <div class="timeline-content">
+                <h3>Сделай мини-проект</h3>
+                <p>Список задач, блог, портфолио или короткий сервис — практика закрепляет лучше теории.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Карта знаний">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Карта знаний темы</h2>
+            <p>
+              Схема ключевых понятий темы:
+              Python → backend → Django / Flask → база данных.
+            </p>
+          </div>
+
+          <figure class="knowledge-figure reveal"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjM5MCIgdmlld0JveD0iMCAwIDEwMDAgMzkwIj48cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIzOTAiIHJ4PSIyMCIgZmlsbD0iIzEyMWEyOCIvPjxnIHN0cm9rZT0iIzcwYTVmZiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNTAwIDg4VjEyNk01MDAgMTkyVjIzNU01MDAgMjM1SDI1MFYyNjdNNTAwIDIzNUg3NTBWMjY3TTI1MCAzMjdWMzU0SDc1MFYzMjciLz48L2c+PGcgZmlsbD0iIzE4MjIzMyIgc3Ryb2tlPSIjNzBhNWZmIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjM1MCIgeT0iMjUiIHdpZHRoPSIzMDAiIGhlaWdodD0iNjMiIHJ4PSIxMiIvPjxyZWN0IHg9IjMwMCIgeT0iMTI2IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjY2IiByeD0iMTIiLz48cmVjdCB4PSIxMzAiIHk9IjI2NyIgd2lkdGg9IjI0MCIgaGVpZ2h0PSI2MCIgcng9IjEyIi8+PHJlY3QgeD0iNjMwIiB5PSIyNjciIHdpZHRoPSIyNDAiIGhlaWdodD0iNjAiIHJ4PSIxMiIvPjwvZz48ZyBmaWxsPSIjZWRmM2ZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjYiPjx0ZXh0IHg9IjUwMCIgeT0iNjUiPlB5dGhvbjwvdGV4dD48dGV4dCB4PSI1MDAiIHk9IjE2OCI+QmFja2VuZC3RgNCw0LfRgNCw0LHQvtGC0LrQsDwvdGV4dD48dGV4dCB4PSIyNTAiIHk9IjMwNiI+RGphbmdvPC90ZXh0Pjx0ZXh0IHg9Ijc1MCIgeT0iMzA2Ij5GbGFzazwvdGV4dD48dGV4dCB4PSI1MDAiIHk9IjM4MSIgZm9udC1zaXplPSIyMiI+0JHQsNC30LAg0LTQsNC90L3Ri9GFPC90ZXh0PjwvZz48L3N2Zz4=" width="1000" height="390" alt="Python используется для backend-разработки. Django и Flask обрабатывают запросы и взаимодействуют с базой данных."><figcaption>Схема понятий Python и веб-разработки</figcaption></figure>
+          <div class="panel tree reveal" aria-label="Дерево знаний Python и веб-разработки">
+            <ul class="tree-root">
+              <li>
+                <span class="tree-node strong">Python</span>
+                <ul>
+                  <li>
+                    <span class="tree-node">Backend-разработка</span>
+                    <ul>
+                      <li>Обработка запросов</li>
+                      <li>Работа с базой данных</li>
+                      <li>Формирование ответа</li>
+                      <li>Маршруты и контроллеры</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <span class="tree-node">Django</span>
+                    <ul>
+                      <li>ORM и админ-панель</li>
+                      <li>Готовая архитектура</li>
+                      <li>Быстрый старт для CRUD-проектов</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <span class="tree-node">Flask</span>
+                    <ul>
+                      <li>Минимализм и гибкость</li>
+                      <li>Расширения по необходимости</li>
+                      <li>Хорош для небольших API</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Технологии и понятия">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Ключевые технологии и понятия</h2>
+            <p>Слова, которые часто встречаются в веб-разработке на Python.</p>
+          </div>
+
+          <div class="chips reveal">
+            <span class="chip">Python</span>
+            <span class="chip">HTTP</span>
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">JavaScript</span>
+            <span class="chip">Django</span>
+            <span class="chip">Flask</span>
+            <span class="chip">SQLite</span>
+            <span class="chip">ORM</span>
+            <span class="chip">REST API</span>
+            <span class="chip">Git</span>
+            <span class="chip">Deploy</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Проекты для тренировки">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Идеи для практики</h2>
+            <p>Если хочется закрепить материал, лучше всего сделать маленький проект.</p>
+          </div>
+
+          <div class="card-grid">
+            <article class="card reveal">
+              <h3><span class="tag">✅</span>Todo-список</h3>
+              <p>Добавление, удаление и отметка задач — классика для первого CRUD-приложения.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">📝</span>Мини-блог</h3>
+              <p>Статьи, категории и страница с деталями поста — хороший проект для Django.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">🔗</span>Сокращатель ссылок</h3>
+              <p>Простая логика, база данных и редиректы — удобно делать на Flask.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3><span class="tag">🧑‍💻</span>Портфолио</h3>
+              <p>Личный сайт с проектами, контактами и красивой подачей материалов.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq" aria-label="Частые вопросы">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Частые вопросы</h2>
+            <p>Короткие ответы на то, что обычно спрашивают новички.</p>
+          </div>
+
+          <details class="reveal">
+            <summary>Нужно ли сразу учить Django и Flask?</summary>
+            <p>Нет. Лучше выбрать один фреймворк, сделать на нём простой проект и уже потом сравнивать со вторым.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>Можно ли делать сайты без базы данных?</summary>
+            <p>Да, но большинство реальных проектов хранят пользователей, товары или контент, поэтому база данных быстро становится нужна.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>Что важнее: теория или практика?</summary>
+            <p>Практика. Теория помогает понимать, что происходит, но навык появляется только после написания кода и разбора ошибок.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Быстрый переход">
+        <div class="container">
+          <div class="cta-panel reveal">
+            <div>
+              <h2>Готовы выбрать стек?</h2>
+              <p class="lead" style="margin-top: 8px;">
+                Откройте сравнение Django и Flask — там есть таблицы, примеры кода и мини-тест.
+              </p>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="#/frameworks">Открыть сравнение</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================= О PYTHON ============================= -->
+    <section class="page" data-route="/about" hidden aria-label="Страница о Python">
+      <div class="container page-hero">
+        <nav class="breadcrumb" aria-label="Хлебные крошки">
+          <a href="#/">Главная</a>
+          <span aria-hidden="true">/</span>
+          <span>О Python</span>
+        </nav>
+
+        <p class="eyebrow">Раздел 1</p>
+        <h1>Python как язык серверной разработки</h1>
+        <p class="lead">
+          Простой синтаксис, мощная экосистема и зрелые фреймворки делают Python
+          удобным языком для входа в веб-разработку.
+        </p>
+      </div>
+
+      <section class="section" aria-label="Что такое backend">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Что такое backend-разработка</h2>
+            <p>
+              Backend — это часть приложения, которая работает на сервере:
+              принимает запросы, обрабатывает логику, обращается к базе данных и отправляет ответ.
+            </p>
+          </div>
+
+          <div class="card-grid">
+            <article class="card reveal">
+              <h3>🌐 Обработка запросов</h3>
+              <p>Фреймворк принимает HTTP-запрос и определяет, какой код должен его обработать.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>🗄️ База данных</h3>
+              <p>Приложение читает и сохраняет пользователей, товары, статьи и другие данные через ORM или SQL.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>📤 Формирование ответа</h3>
+              <p>Сервер возвращает HTML, JSON или файл — то, что в итоге видит пользователь.</p>
+            </article>
+
+            <article class="card reveal">
+              <h3>🔐 Логика и безопасность</h3>
+              <p>Проверка данных, права доступа, обработка ошибок и подготовка корректного ответа.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Как проходит запрос">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Как проходит запрос пользователя</h2>
+            <p>Упрощённая цепочка от клика до ответа сервера.</p>
+          </div>
+
+          <div class="steps">
+            <article class="step reveal">
+              <strong>1</strong>
+              <h3>Браузер</h3>
+              <p>Пользователь открывает страницу или отправляет форму.</p>
+            </article>
+
+            <article class="step reveal">
+              <strong>2</strong>
+              <h3>HTTP-запрос</h3>
+              <p>Запрос уходит на сервер: метод, адрес и данные.</p>
+            </article>
+
+            <article class="step reveal">
+              <strong>3</strong>
+              <h3>Фреймворк</h3>
+              <p>Django или Flask находит нужный маршрут и обработчик.</p>
+            </article>
+
+            <article class="step reveal">
+              <strong>4</strong>
+              <h3>Логика и БД</h3>
+              <p>Код проверяет данные, читает или сохраняет информацию.</p>
+            </article>
+
+            <article class="step reveal">
+              <strong>5</strong>
+              <h3>Ответ</h3>
+              <p>Сервер возвращает страницу, JSON или ошибку.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Сильные стороны Python">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Сильные стороны Python в вебе</h2>
+            <p>Ключевые причины, по которым язык остаётся популярным выбором для серверной разработки.</p>
+          </div>
+
+          <div class="table-wrap reveal">
+            <table>
+              <caption>Почему Python хорошо подходит для старта в веб-разработке</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Особенность</th>
+                  <th scope="col">Почему это важно</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Читаемый синтаксис</td>
+                  <td>Код проще поддерживать и разбирать в команде, ниже порог входа для новичков.</td>
+                </tr>
+                <tr>
+                  <td>Готовые фреймворки</td>
+                  <td>Django и Flask закрывают большую часть типовых задач серверной разработки.</td>
+                </tr>
+                <tr>
+                  <td>Экосистема библиотек</td>
+                  <td>Легко подключить базу данных, аутентификацию, API-инструменты и аналитику.</td>
+                </tr>
+                <tr>
+                  <td>Связь с анализом данных</td>
+                  <td>Один язык можно использовать для веба, автоматизации и задач анализа данных.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Примеры кода">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Примеры кода</h2>
+            <p>Минимальный сервер на Flask и базовая работа с SQLite — две важные точки входа.</p>
+          </div>
+
+          <div class="code-grid">
+            <div class="code-block reveal">
+              <div class="code-head">
+                <span>Flask: минимальный сервер</span>
+                <button class="copy-btn" type="button">Копировать</button>
+              </div>
+              <pre><code>from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Привет, это Python-сервер!"
+
+if __name__ == "__main__":
+    app.run(debug=True)</code></pre>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-head">
+                <span>SQLite: базовая работа с данными</span>
+                <button class="copy-btn" type="button">Копировать</button>
+              </div>
+              <pre><code>import sqlite3
+
+conn = sqlite3.connect("app.db")
+cursor = conn.cursor()
+
+cursor.execute(
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)"
+)
+
+cursor.execute(
+    "INSERT INTO users (name) VALUES ('Айгерим')"
+)
+
+conn.commit()
+conn.close()</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section faq" aria-label="Словарь терминов">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Мини-словарь терминов</h2>
+            <p>Понятия, которые помогают увереннее читать материалы по веб-разработке.</p>
+          </div>
+
+          <details class="reveal">
+            <summary>Backend</summary>
+            <p>Серверная часть приложения, которая обрабатывает запросы, хранит данные и возвращает ответы.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>Frontend</summary>
+            <p>Клиентская часть сайта: интерфейс, кнопки, формы и всё, что пользователь видит в браузере.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>HTTP</summary>
+            <p>Протокол, по которому браузер и сервер обмениваются запросами и ответами.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>ORM</summary>
+            <p>Инструмент, который позволяет работать с базой данных через объекты и код вместо ручных SQL-запросов.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>API</summary>
+            <p>Интерфейс, через который одна программа может получать данные или функции от другой программы.</p>
+          </details>
+
+          <details class="reveal">
+            <summary>SQLite</summary>
+            <p>Лёгкая база данных, которая часто используется для учебных и небольших проектов.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Практический чек-лист">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Практический чек-лист</h2>
+            <p>Что можно сделать после изучения этого раздела.</p>
+          </div>
+
+          <div class="panel reveal">
+            <ul class="check-list">
+              <li>Объяснить, чем сервер отличается от браузера.</li>
+              <li>Понять, зачем приложению нужна база данных.</li>
+              <li>Запустить простой сервер на Flask.</li>
+              <li>Создать один маршрут и вернуть текст.</li>
+              <li>Сделать таблицу в SQLite и добавить туда запись.</li>
+              <li>Сравнить, какие задачи лучше решать фреймворком, а не вручную.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Дальше">
+        <div class="container">
+          <div class="cta-panel reveal">
+            <div>
+              <h2>Куда двигаться дальше?</h2>
+              <p class="lead" style="margin-top: 8px;">
+                Когда основы понятны, следующий шаг — выбрать фреймворк: Django или Flask.
+              </p>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="#/frameworks">Сравнить Django и Flask</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================= ФРЕЙМВОРКИ ============================= -->
+    <section class="page" data-route="/frameworks" hidden aria-label="Страница фреймворков">
+      <div class="container page-hero">
+        <nav class="breadcrumb" aria-label="Хлебные крошки">
+          <a href="#/">Главная</a>
+          <span aria-hidden="true">/</span>
+          <span>Фреймворки</span>
+        </nav>
+
+        <p class="eyebrow">Раздел 2</p>
+        <h1>Django или Flask: два подхода к одному языку</h1>
+        <p class="lead">
+          Оба фреймворка решают одну задачу — построение серверной части сайта,
+          но делают это по-разному: через готовую архитектуру или через гибкое минимальное ядро.
+        </p>
+      </div>
+
+      <section class="section" aria-label="Сравнение Django и Flask">
+        <div class="container">
+          <div class="compare-grid">
+            <article class="compare-card django reveal">
+              <span class="badge-inline">🟢 Django</span>
+              <h3>Django</h3>
+              <p class="subtitle">«Batteries included» — фреймворк с полным набором инструментов.</p>
+              <ul class="list">
+                <li>Встроенная ORM для работы с базой данных</li>
+                <li>Готовая админ-панель для управления контентом</li>
+                <li>Строгая структура проекта и единый стиль кода</li>
+                <li>Хорошо подходит для средних и крупных приложений</li>
+                <li>Меньше ручных решений для типовых задач</li>
+              </ul>
+            </article>
+
+            <article class="compare-card flask reveal">
+              <span class="badge-inline">⚪ Flask</span>
+              <h3>Flask</h3>
+              <p class="subtitle">Микрофреймворк — минимальное ядро и максимум гибкости.</p>
+              <ul class="list">
+                <li>Минимум навязанной структуры</li>
+                <li>Расширения подключаются по мере необходимости</li>
+                <li>Проще разобраться с нуля и понять работу сервера</li>
+                <li>Хорош для небольших сервисов, учебных проектов и API</li>
+                <li>Больше контроля над архитектурой</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Когда что использовать">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Когда что использовать</h2>
+            <p>Короткая практическая таблица для выбора фреймворка под задачу.</p>
+          </div>
+
+          <div class="table-wrap reveal">
+            <table>
+              <caption>Рекомендации по выбору между Django и Flask</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Задача</th>
+                  <th scope="col">Рекомендация</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Учебный проект и первое знакомство с backend</td>
+                  <td>Flask — проще увидеть, как всё работает изнутри.</td>
+                </tr>
+                <tr>
+                  <td>Сайт с админкой и большим количеством моделей данных</td>
+                  <td>Django — админ-панель и ORM экономят время.</td>
+                </tr>
+                <tr>
+                  <td>Небольшой REST API</td>
+                  <td>Flask — минимум лишнего кода.</td>
+                </tr>
+                <tr>
+                  <td>Проект, который будет расти и поддерживаться командой</td>
+                  <td>Django — единая структура снижает хаос в коде.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Примеры кода на Django и Flask">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Одна и та же страница на двух фреймворках</h2>
+            <p>Код показывает разницу в объёме шаблонного кода для простейшего маршрута.</p>
+          </div>
+
+          <div class="code-grid">
+            <div class="code-block reveal">
+              <div class="code-head">
+                <span>Flask</span>
+                <button class="copy-btn" type="button">Копировать</button>
+              </div>
+              <pre><code>from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Главная страница"</code></pre>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-head">
+                <span>Django: views.py</span>
+                <button class="copy-btn" type="button">Копировать</button>
+              </div>
+              <pre><code>from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Главная страница")</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Мини-тест">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Мини-тест: что тебе ближе?</h2>
+            <p>Ответь на три вопроса и получи рекомендацию по выбору фреймворка.</p>
+          </div>
+
+          <form id="quiz-form" class="quiz reveal" novalidate>
+            <h3>Выбери один вариант в каждом вопросе</h3>
+
+            <fieldset>
+              <legend>1. Что важнее на старте?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option">
+                  <input type="radio" name="q1" value="flask" required>
+                  <span>Понять, как сервер работает изнутри</span>
+                </label>
+                <label class="quiz-option">
+                  <input type="radio" name="q1" value="django">
+                  <span>Быстрее получить готовый результат</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>2. Нужна ли готовая админ-панель?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option">
+                  <input type="radio" name="q2" value="flask" required>
+                  <span>Нет, соберу нужные части сам</span>
+                </label>
+                <label class="quiz-option">
+                  <input type="radio" name="q2" value="django">
+                  <span>Да, это сильно экономит время</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>3. Какой проект ты хочешь сделать?</legend>
+              <div class="quiz-options">
+                <label class="quiz-option">
+                  <input type="radio" name="q3" value="flask" required>
+                  <span>Небольшой сервис, API или учебный пример</span>
+                </label>
+                <label class="quiz-option">
+                  <input type="radio" name="q3" value="django">
+                  <span>Сайт с пользователями, контентом и базой данных</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="hero-actions">
+              <button class="btn btn-primary" type="submit">Показать результат</button>
+            </div>
+
+            <p id="quiz-result" class="quiz-result" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section faq" aria-label="Частые вопросы">
+        <div class="container">
+          <div class="section-head reveal">
+            <h2>Частые вопросы</h2>
+            <p>Короткие ответы на типовые вопросы новичков.</p>
+          </div>
+
+          <details class="reveal">
+            <summary>Что проще выучить первым?</summary>
+            <p>
+              Если хочется быстро понять, как работает сервер, лучше начать с Flask.
+              Если нужен проект с готовой админкой и базой данных — удобно начинать с Django.
+            </p>
+          </details>
+
+          <details class="reveal">
+            <summary>Нужно ли знать SQL?</summary>
+            <p>
+              Желательно. Даже при использовании ORM базовое понимание SQL помогает
+              лучше работать с данными и отлаживать запросы.
+            </p>
+          </details>
+
+          <details class="reveal">
+            <summary>Можно ли потом перейти с Flask на Django?</summary>
+            <p>
+              Да. Python остаётся тем же, поэтому переход возможен, но потребуется
+              изучить другую архитектуру проекта и встроенные инструменты Django.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Переход к контактам">
+        <div class="container">
+          <div class="cta-panel reveal">
+            <div>
+              <h2>Остались вопросы?</h2>
+              <p class="lead" style="margin-top: 8px;">
+                Напишите через форму обратной связи — можно спросить про выбор фреймворка,
+                базу данных или первый проект.
+              </p>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href="#/contacts">Перейти к контактам</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================= КОНТАКТЫ ============================= -->
+    <section class="page" data-route="/contacts" hidden aria-label="Страница контактов">
+      <div class="container page-hero">
+        <nav class="breadcrumb" aria-label="Хлебные крошки">
+          <a href="#/">Главная</a>
+          <span aria-hidden="true">/</span>
+          <span>Контакты</span>
+        </nav>
+
+        <p class="eyebrow">Раздел 3</p>
+        <h1>Связаться с нами</h1>
+        <p class="lead">
+          Есть вопрос по материалам, нашли неточность или хотите предложить новую тему —
+          заполните форму ниже.
+        </p>
+      </div>
+
+      <section class="section" aria-label="Форма и информация">
+        <div class="container">
+          <div class="contact-grid">
+
+            <div class="form-card reveal">
+              <div class="section-head">
+                <h2>Форма обратной связи</h2>
+                <p>Проверка полей выполняется без перезагрузки страницы.</p>
+              </div>
+
+              <form id="contact-form" class="form-grid" novalidate>
+                <div class="field">
+                  <label for="name">Имя</label>
+                  <input id="name" name="name" type="text" autocomplete="name" placeholder="Ваше имя" required>
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required>
+                </div>
+
+                <div class="field">
+                  <label for="topic">Тема обращения</label>
+                  <select id="topic" name="topic">
+                    <option>Вопрос по Python</option>
+                    <option>Вопрос по Django</option>
+                    <option>Вопрос по Flask</option>
+                    <option>База данных</option>
+                    <option>Другое</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="message">Сообщение</label>
+                  <textarea id="message" name="message" rows="6" placeholder="Напишите ваш вопрос или предложение" required></textarea>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Сохранить сообщение</button>
+
+                <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+
+                <p class="note">
+                  Это учебная форма: сообщения сохраняются только в этом браузере и никому не отправляются. В дальнейшем можно подключить
+                  серверную часть на Flask или Django.
+                </p>
+              </form>
+            </div>
+
+            <aside class="info-card reveal" aria-label="Информация о проекте">
+              <div class="section-head">
+                <h2>Информация</h2>
+                <p>Краткие сведения о проекте и технологии.</p>
+              </div>
+
+              <div class="info-list">
+                <div class="info-item">
+                  <strong>Проект</strong>
+                  <p>PyWeb Guide — веб-ресурс о Python в веб-разработке</p>
+                </div>
+
+                <div class="info-item">
+                  <strong>Разделы</strong>
+                  <p>Главная, О Python, Фреймворки, Контакты</p>
+                </div>
+
+                <div class="info-item">
+                  <strong>Технологии</strong>
+                  <p>HTML, CSS, JavaScript, адаптивная вёрстка, анимации</p>
+                </div>
+
+                <div class="info-item">
+                  <strong>Темы</strong>
+                  <p>Python, backend, Django, Flask, базы данных, практика</p>
+                </div>
+
+                <div class="info-item">
+                  <strong>Формат</strong>
+                  <p>Готовый веб-ресурс с интерактивной навигацией</p>
+                </div>
+              </div>
+            </aside>
+
+          </div>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        © 2026 PyWeb Guide — современный веб-ресурс о Python
+      </div>
+      <div>
+        <a href="#/">Главная</a> •
+        <a href="#/about">О Python</a> •
+        <a href="#/frameworks">Фреймворки</a> •
+        <a href="#/contacts">Контакты</a>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" type="button" aria-label="Прокрутить наверх">↑</button>
+
+  <script>
+(function () {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const menuButton = document.querySelector(".burger");
+      const nav = document.getElementById("site-nav");
+
+      function closeMenu() {
+        if (!nav || !menuButton) return;
+        nav.classList.remove("open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Открыть меню");
+      }
+
+      if (menuButton && nav) {
+        menuButton.addEventListener("click", function () {
+          const isOpen = nav.classList.toggle("open");
+          menuButton.setAttribute("aria-expanded", String(isOpen));
+          menuButton.setAttribute("aria-label", isOpen ? "Закрыть меню" : "Открыть меню");
+        });
+
+        nav.querySelectorAll(".nav-link").forEach(function (link) {
+          link.addEventListener("click", closeMenu);
+        });
+      }
+
+      const routes = {
+        "/": {
+          title: "PyWeb Guide — Python в веб-разработке"
+        },
+        "/about": {
+          title: "О Python — PyWeb Guide"
+        },
+        "/frameworks": {
+          title: "Django и Flask — PyWeb Guide"
+        },
+        "/contacts": {
+          title: "Контакты — PyWeb Guide"
+        }
+      };
+
+      const pages = document.querySelectorAll(".page");
+      const navLinks = document.querySelectorAll(".nav-link");
+
+      function normalizeHash(hash) {
+        if (!hash || hash === "#") return "/";
+
+        try {
+          hash = decodeURIComponent(hash);
+        } catch (error) {
+          hash = "/";
+        }
+
+        hash = hash.replace(/^#/, "");
+
+        if (!hash.startsWith("/")) {
+          hash = "/" + hash;
+        }
+
+        if (hash.length > 1 && hash.endsWith("/")) {
+          hash = hash.slice(0, -1);
+        }
+
+        return hash || "/";
+      }
+
+      function render() {
+        let path = normalizeHash(window.location.hash);
+
+        if (!routes[path]) {
+          path = "/";
+        }
+
+        pages.forEach(function (page) {
+          const isActive = page.dataset.route === path;
+          page.hidden = !isActive;
+        });
+
+        navLinks.forEach(function (link) {
+          const linkPath = normalizeHash(link.getAttribute("href") || "");
+          const isActive = linkPath === path;
+
+          link.classList.toggle("active", isActive);
+
+          if (isActive) {
+            link.setAttribute("aria-current", "page");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+
+        document.title = routes[path].title;
+        closeMenu();
+        window.scrollTo(0, 0);
+      }
+
+      document.querySelector(".skip-link").addEventListener("click", function (event) {
+        event.preventDefault();
+        document.getElementById("content").focus();
+      });
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && nav.classList.contains("open")) { closeMenu(); menuButton.focus(); }
+      });
+      window.addEventListener("hashchange", render);
+      render();
+
+      /* Reveal on scroll */
+      const revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.14
+      });
+
+      document.querySelectorAll(".reveal").forEach(function (element) {
+        if (prefersReducedMotion) {
+          element.classList.add("visible");
+        } else {
+          revealObserver.observe(element);
+        }
+      });
+
+      /* Counters */
+      function animateCounter(element) {
+        const target = parseInt(element.dataset.count, 10) || 0;
+        const duration = 1100;
+        const start = performance.now();
+
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = Math.floor(target * eased);
+
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            element.textContent = target;
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      const counterObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+
+            if (prefersReducedMotion) {
+              element.textContent = element.dataset.count;
+            } else {
+              animateCounter(element);
+            }
+
+            counterObserver.unobserve(element);
+          }
+        });
+      }, {
+        threshold: 0.4
+      });
+
+      document.querySelectorAll(".stat-number").forEach(function (element) {
+        counterObserver.observe(element);
+      });
+
+      /* Typing effect */
+      const typedElement = document.getElementById("typed-text");
+
+      if (typedElement && !prefersReducedMotion) {
+        const words = ["Django", "Flask", "backend", "базы данных", "практики"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+
+        function typeLoop() {
+          const currentWord = words[wordIndex];
+
+          if (!deleting) {
+            charIndex++;
+            typedElement.textContent = currentWord.slice(0, charIndex);
+
+            if (charIndex === currentWord.length) {
+              deleting = true;
+              setTimeout(typeLoop, 1300);
+              return;
+            }
+          } else {
+            charIndex--;
+            typedElement.textContent = currentWord.slice(0, charIndex);
+
+            if (charIndex === 0) {
+              deleting = false;
+              wordIndex = (wordIndex + 1) % words.length;
+            }
+          }
+
+          setTimeout(typeLoop, deleting ? 45 : 85);
+        }
+
+        setTimeout(typeLoop, 500);
+      }
+
+      /* Progress + toTop */
+      const progress = document.getElementById("progress");
+      const toTop = document.querySelector(".to-top");
+
+      function updateScrollUI() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+        if (progress) {
+          progress.style.width = scrolled + "%";
+        }
+
+        if (toTop) {
+          toTop.classList.toggle("visible", scrollTop > 350);
+        }
+      }
+
+      window.addEventListener("scroll", updateScrollUI, {
+        passive: true
+      });
+
+      updateScrollUI();
+
+      if (toTop) {
+        toTop.addEventListener("click", function () {
+          window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion ? "auto" : "smooth"
+          });
+        });
+      }
+
+      /* Copy code */
+      document.addEventListener("click", async function (event) {
+        const button = event.target.closest(".copy-btn");
+
+        if (!button) return;
+
+        const block = button.closest(".code-block, .window");
+        const code = block ? block.querySelector("code") : null;
+
+        if (!code) return;
+
+        const oldText = button.textContent;
+
+        try {
+          await navigator.clipboard.writeText(code.innerText);
+          button.textContent = "Скопировано";
+          button.classList.add("copied");
+
+          setTimeout(function () {
+            button.textContent = oldText;
+            button.classList.remove("copied");
+          }, 1800);
+        } catch (error) {
+          button.textContent = "Ошибка";
+
+          setTimeout(function () {
+            button.textContent = oldText;
+          }, 1800);
+        }
+      });
+
+      /* Quiz */
+      const quizForm = document.getElementById("quiz-form");
+
+      if (quizForm) {
+        const quizResult = document.getElementById("quiz-result");
+
+        quizForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const data = new FormData(quizForm);
+          const q1 = data.get("q1");
+          const q2 = data.get("q2");
+          const q3 = data.get("q3");
+
+          if (!q1 || !q2 || !q3) {
+            quizResult.textContent = "Ответь на все три вопроса.";
+            quizResult.style.color = "var(--danger)";
+            return;
+          }
+
+          let django = 0;
+          let flask = 0;
+
+          [q1, q2, q3].forEach(function (answer) {
+            if (answer === "django") {
+              django++;
+            } else if (answer === "flask") {
+              flask++;
+            }
+          });
+
+          if (django > flask) {
+            quizResult.textContent = "Тебе лучше подойдёт Django: готовая структура, ORM и админ-панель.";
+            quizResult.style.color = "var(--success)";
+          } else if (flask > django) {
+            quizResult.textContent = "Тебе лучше подойдёт Flask: минимализм, гибкость и понятный старт.";
+            quizResult.style.color = "var(--accent-2)";
+          } else {
+            quizResult.textContent = "Можно начать с Flask, а затем посмотреть в сторону Django.";
+            quizResult.style.color = "var(--yellow)";
+          }
+        });
+      }
+
+      /* Contact form */
+      const form = document.getElementById("contact-form");
+
+      if (form) {
+        const status = document.getElementById("form-status");
+        const formCard = form.closest(".form-card");
+
+        function shakeForm() {
+          if (!formCard || prefersReducedMotion) return;
+
+          formCard.classList.remove("shake");
+          void formCard.offsetWidth;
+          formCard.classList.add("shake");
+
+          formCard.addEventListener("animationend", function () {
+            formCard.classList.remove("shake");
+          }, {
+            once: true
+          });
+        }
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = form.elements.namedItem("name").value.trim();
+          const email = form.elements.namedItem("email").value.trim();
+          const message = form.elements.namedItem("message").value.trim();
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+          if (!name || !email || !message) {
+            status.textContent = "Заполните все обязательные поля.";
+            status.className = "form-status error";
+            shakeForm();
+            return;
+          }
+
+          if (!emailPattern.test(email)) {
+            status.textContent = "Проверьте корректность email.";
+            status.className = "form-status error";
+            shakeForm();
+            return;
+          }
+
+          try {
+            const saved = JSON.parse(localStorage.getItem("pyweb_messages") || "[]");
+            if (!Array.isArray(saved)) throw new Error("Invalid local data");
+
+            saved.push({
+              name: name,
+              email: email,
+              topic: form.elements.namedItem("topic").value,
+              message: message,
+              date: new Date().toISOString()
+            });
+
+            localStorage.setItem("pyweb_messages", JSON.stringify(saved));
+          } catch (error) {
+            status.textContent = "Не удалось сохранить сообщение. Проверьте доступ к хранилищу браузера.";
+            status.className = "form-status error";
+            return;
+          }
+
+          status.textContent = "Сообщение сохранено в этом браузере. Отправка на сервер не выполняется.";
+          status.className = "form-status success";
+          form.reset();
+
+          setTimeout(function () {
+            status.textContent = "";
+            status.className = "form-status";
+          }, 5000);
+        });
+      }
+    })();
+</script>
+</body>
+</html>
