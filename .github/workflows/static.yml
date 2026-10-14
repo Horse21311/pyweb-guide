@@ -1,0 +1,53 @@
+name: Publish PyWeb Guide
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Release stalled first deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status=$(curl --silent --show-error --output cancel-response.json --write-out '%{http_code}' --request POST \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/pages/deployments/468aace48aee0d5b356517fcfdb738886aa019af/cancel")
+          echo "Previous deployment cancellation returned HTTP $status"
+          if [ "$status" != "204" ] && [ "$status" != "404" ]; then
+            cat cancel-response.json
+            exit 1
+          fi
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy site
+        id: deployment
+        uses: actions/deploy-pages@v4
