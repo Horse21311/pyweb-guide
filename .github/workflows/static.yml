@@ -40,6 +40,23 @@ jobs:
             cat cancel-response.json
             exit 1
           fi
+          if [ "$status" = "204" ]; then
+            endpoint="repos/$GITHUB_REPOSITORY/pages/deployments/468aace48aee0d5b356517fcfdb738886aa019af"
+            for attempt in $(seq 1 24); do
+              previous=$(gh api "$endpoint" --jq '.status')
+              echo "Previous deployment state: $previous"
+              case "$previous" in
+                succeed|deployment_cancelled|deployment_failed|deployment_content_failed|deployment_lost|deployment_perms_error)
+                  break
+                  ;;
+              esac
+              if [ "$attempt" = "24" ]; then
+                echo "GitHub has not released the previous deployment after cancellation."
+                exit 1
+              fi
+              sleep 5
+            done
+          fi
       - name: Prepare static site
         run: |
           mkdir -p _site
